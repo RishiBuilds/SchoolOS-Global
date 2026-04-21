@@ -1,1 +1,1 @@
-# Global-SchoolOS
+# SchoolOS-Global
