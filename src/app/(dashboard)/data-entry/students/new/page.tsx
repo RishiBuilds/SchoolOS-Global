@@ -19,6 +19,7 @@ import {
   Heart,
   ShieldCheck,
   Sparkles,
+  IdCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/shared";
 import { studentSchema, type StudentFormData } from "@/lib/validations/student";
@@ -72,19 +73,43 @@ export default function NewStudentPage() {
     }
   };
 
-  const inp =
-    "w-full px-4 py-2.5 rounded-lg bg-bg-input border border-border text-text-primary placeholder:text-text-muted text-sm transition-all duration-200 hover:border-text-muted";
-
   const getInitials = () => {
     const f = firstName?.[0] || "";
     const l = lastName?.[0] || "";
     return (f + l).toUpperCase() || "?";
   };
 
+  const getInpClass = (hasIcon: boolean) =>
+    `w-full ${
+      hasIcon ? "pl-10" : "px-4"
+    } pr-4 py-2.5 rounded-xl bg-bg-input border border-border text-text-primary placeholder:text-text-muted text-sm transition-all duration-200 hover:border-text-muted focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 shadow-sm outline-none`;
+
+  const InputGroup = ({ icon: Icon, label, error, required, children }: any) => (
+    <div>
+      <label className="text-sm font-medium text-text-secondary mb-1.5 block">
+        {label} {required && <span className="text-danger">*</span>}
+      </label>
+      <div className="relative group">
+        {Icon && (
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+            <Icon className="w-4.5 h-4.5 text-text-muted group-focus-within:text-primary transition-colors duration-200" />
+          </div>
+        )}
+        {children}
+      </div>
+      {error && (
+        <p className="text-danger text-[11px] mt-1.5 flex items-center gap-1.5 animate-fadeIn font-medium">
+          <span className="inline-block w-1 h-1 rounded-full bg-danger" />
+          {error.message}
+        </p>
+      )}
+    </div>
+  );
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-slideUp">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between animate-slideDown">
         <div className="flex items-center gap-3">
           <Link href="/data-entry/students">
             <button className="p-2.5 rounded-xl bg-white border border-border hover:bg-bg-muted text-text-muted hover:text-text-primary transition-all duration-200 hover:shadow-sm">
@@ -105,7 +130,7 @@ export default function NewStudentPage() {
         </div>
 
         {/* Live avatar preview */}
-        <div className="hidden sm:flex items-center gap-3 bg-white border border-border rounded-xl px-4 py-3">
+        <div className="hidden sm:flex items-center gap-3 bg-white border border-border rounded-xl px-4 py-3 shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-400 flex items-center justify-center text-white text-sm font-bold shadow-sm">
             {getInitials()}
           </div>
@@ -120,12 +145,15 @@ export default function NewStudentPage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* ── Section 1: Personal Info ── */}
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
-          <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border bg-gradient-to-r from-blue-50/80 to-transparent">
-            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center">
-              <UserCircle className="w-4 h-4 text-primary" />
+        <div
+          className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden animate-slideUp"
+          style={{ animationDelay: "50ms", animationFillMode: "both" }}
+        >
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-gradient-to-r from-blue-50/80 to-transparent">
+            <div className="w-8 h-8 rounded-xl bg-white shadow-sm border border-blue-100 flex items-center justify-center">
+              <UserCircle className="w-4.5 h-4.5 text-blue-600" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-text-primary">
@@ -138,153 +166,112 @@ export default function NewStudentPage() {
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-4">
-              {/* Admission No */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <Hash className="w-3.5 h-3.5 text-text-muted" />
-                  Admission No <span className="text-danger">*</span>
-                </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
+              <InputGroup
+                icon={Hash}
+                label="Admission No"
+                error={errors.admissionNo}
+                required
+              >
                 <input
                   {...register("admissionNo")}
                   placeholder="e.g. ADM2025001"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-                {errors.admissionNo && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.admissionNo.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
 
-              {/* First Name */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  First Name <span className="text-danger">*</span>
-                </label>
+              <InputGroup
+                icon={IdCard}
+                label="First Name"
+                error={errors.firstName}
+                required
+              >
                 <input
                   {...register("firstName")}
                   placeholder="First name"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-                {errors.firstName && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.firstName.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
 
-              {/* Last Name */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  Last Name <span className="text-danger">*</span>
-                </label>
+              <InputGroup
+                icon={IdCard}
+                label="Last Name"
+                error={errors.lastName}
+                required
+              >
                 <input
                   {...register("lastName")}
                   placeholder="Last name"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-                {errors.lastName && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.lastName.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
 
-              {/* DOB */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-text-muted" />
-                  Date of Birth <span className="text-danger">*</span>
-                </label>
+              <InputGroup
+                icon={Calendar}
+                label="Date of Birth"
+                error={errors.dateOfBirth}
+                required
+              >
                 <input
                   type="date"
                   {...register("dateOfBirth")}
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-                {errors.dateOfBirth && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.dateOfBirth.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
 
-              {/* Gender */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  Gender <span className="text-danger">*</span>
-                </label>
-                <select {...register("gender")} className={inp}>
+              <InputGroup
+                icon={Users}
+                label="Gender"
+                error={errors.gender}
+                required
+              >
+                <select {...register("gender")} className={getInpClass(true)}>
                   <option value="">Select gender</option>
                   <option value="MALE">Male</option>
                   <option value="FEMALE">Female</option>
                   <option value="OTHER">Other</option>
                 </select>
-                {errors.gender && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.gender.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
 
-              {/* Blood Group */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <Heart className="w-3.5 h-3.5 text-text-muted" />
-                  Blood Group
-                </label>
-                <select {...register("bloodGroup")} className={inp}>
+              <InputGroup icon={Heart} label="Blood Group">
+                <select {...register("bloodGroup")} className={getInpClass(true)}>
                   <option value="">Select</option>
-                  {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map(
-                    (b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    )
-                  )}
+                  {["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"].map((b) => (
+                    <option key={b} value={b}>
+                      {b}
+                    </option>
+                  ))}
                 </select>
-              </div>
+              </InputGroup>
 
-              {/* Phone */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <Phone className="w-3.5 h-3.5 text-text-muted" />
-                  Phone
-                </label>
+              <InputGroup icon={Phone} label="Phone">
                 <input
                   {...register("phone")}
                   placeholder="+91 XXXXX XXXXX"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-              </div>
+              </InputGroup>
 
-              {/* Email */}
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <Mail className="w-3.5 h-3.5 text-text-muted" />
-                  Email
-                </label>
+              <InputGroup icon={Mail} label="Email">
                 <input
                   type="email"
                   {...register("email")}
                   placeholder="student@email.com"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-              </div>
+              </InputGroup>
             </div>
           </div>
         </div>
 
         {/* ── Section 2: Academic Info ── */}
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
-          <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border bg-gradient-to-r from-violet-50/80 to-transparent">
-            <div className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center">
-              <GraduationCap className="w-4 h-4 text-violet-600" />
+        <div
+          className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden animate-slideUp"
+          style={{ animationDelay: "100ms", animationFillMode: "both" }}
+        >
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-gradient-to-r from-violet-50/80 to-transparent">
+            <div className="w-8 h-8 rounded-xl bg-white shadow-sm border border-violet-100 flex items-center justify-center">
+              <GraduationCap className="w-4.5 h-4.5 text-violet-600" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-text-primary">
@@ -297,13 +284,14 @@ export default function NewStudentPage() {
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <GraduationCap className="w-3.5 h-3.5 text-text-muted" />
-                  Assign to Class <span className="text-danger">*</span>
-                </label>
-                <select {...register("classId")} className={inp}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
+              <InputGroup
+                icon={GraduationCap}
+                label="Assign to Class"
+                error={errors.classId}
+                required
+              >
+                <select {...register("classId")} className={getInpClass(true)}>
                   <option value="">Select class</option>
                   {classes.map((c: any) => (
                     <option key={c.id} value={c.id}>
@@ -312,29 +300,28 @@ export default function NewStudentPage() {
                     </option>
                   ))}
                 </select>
-                {errors.classId && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.classId.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
               <div className="flex items-end pb-1">
-                <p className="text-xs text-text-muted bg-violet-50 rounded-lg px-3 py-2 border border-violet-100">
-                  <Sparkles className="w-3 h-3 inline mr-1 text-violet-500" />
-                  Students can be reassigned to a different class later from the
-                  edit page.
-                </p>
+                <div className="bg-violet-50/50 rounded-xl px-4 py-3 border border-violet-100/50 flex items-start gap-2 w-full">
+                  <Sparkles className="w-4 h-4 text-violet-500 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-text-secondary leading-relaxed">
+                    Students can be reassigned to a different class later from the
+                    edit page without losing their historical records.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* ── Section 3: Address ── */}
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
-          <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border bg-gradient-to-r from-emerald-50/80 to-transparent">
-            <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
-              <MapPin className="w-4 h-4 text-emerald-600" />
+        <div
+          className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden animate-slideUp"
+          style={{ animationDelay: "150ms", animationFillMode: "both" }}
+        >
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-gradient-to-r from-emerald-50/80 to-transparent">
+            <div className="w-8 h-8 rounded-xl bg-white shadow-sm border border-emerald-100 flex items-center justify-center">
+              <MapPin className="w-4.5 h-4.5 text-emerald-600" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-text-primary">
@@ -347,46 +334,42 @@ export default function NewStudentPage() {
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
               <div className="sm:col-span-2 lg:col-span-3">
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  Street Address
-                </label>
-                <input
-                  {...register("address")}
-                  placeholder="House/Flat no, Street, Locality"
-                  className={inp}
-                />
+                <InputGroup icon={MapPin} label="Street Address">
+                  <input
+                    {...register("address")}
+                    placeholder="House/Flat no, Street, Locality"
+                    className={getInpClass(true)}
+                  />
+                </InputGroup>
               </div>
-              <div>
-                <label className="text-sm font-medium text-text-secondary mb-1.5 block">
-                  City
-                </label>
+              <InputGroup label="City">
                 <input
                   {...register("city")}
                   placeholder="e.g. Bengaluru"
-                  className={inp}
+                  className={getInpClass(false)}
                 />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-text-secondary mb-1.5 block">
-                  State
-                </label>
+              </InputGroup>
+              <InputGroup label="State">
                 <input
                   {...register("state")}
                   placeholder="e.g. Karnataka"
-                  className={inp}
+                  className={getInpClass(false)}
                 />
-              </div>
+              </InputGroup>
             </div>
           </div>
         </div>
 
         {/* ── Section 4: Parent / Guardian ── */}
-        <div className="bg-white rounded-xl border border-border overflow-hidden">
-          <div className="flex items-center gap-2.5 px-6 py-4 border-b border-border bg-gradient-to-r from-amber-50/80 to-transparent">
-            <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
-              <ShieldCheck className="w-4 h-4 text-amber-600" />
+        <div
+          className="bg-white rounded-2xl border border-border shadow-sm overflow-hidden animate-slideUp"
+          style={{ animationDelay: "200ms", animationFillMode: "both" }}
+        >
+          <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-gradient-to-r from-amber-50/80 to-transparent">
+            <div className="w-8 h-8 rounded-xl bg-white shadow-sm border border-amber-100 flex items-center justify-center">
+              <ShieldCheck className="w-4.5 h-4.5 text-amber-600" />
             </div>
             <div>
               <h2 className="text-sm font-semibold text-text-primary">
@@ -399,63 +382,53 @@ export default function NewStudentPage() {
           </div>
 
           <div className="p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-5 gap-y-4">
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <UserCircle className="w-3.5 h-3.5 text-text-muted" />
-                  Full Name <span className="text-danger">*</span>
-                </label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-6 gap-y-5">
+              <InputGroup
+                icon={UserCircle}
+                label="Full Name"
+                error={errors.parentName}
+                required
+              >
                 <input
                   {...register("parentName")}
                   placeholder="Parent / Guardian name"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-                {errors.parentName && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.parentName.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
 
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <Phone className="w-3.5 h-3.5 text-text-muted" />
-                  Phone <span className="text-danger">*</span>
-                </label>
+              <InputGroup
+                icon={Phone}
+                label="Phone"
+                error={errors.parentPhone}
+                required
+              >
                 <input
                   {...register("parentPhone")}
                   placeholder="+91 XXXXX XXXXX"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-                {errors.parentPhone && (
-                  <p className="text-danger text-xs mt-1 flex items-center gap-1">
-                    <span className="inline-block w-1 h-1 rounded-full bg-danger" />
-                    {errors.parentPhone.message}
-                  </p>
-                )}
-              </div>
+              </InputGroup>
 
-              <div>
-                <label className="flex items-center gap-1.5 text-sm font-medium text-text-secondary mb-1.5">
-                  <Mail className="w-3.5 h-3.5 text-text-muted" />
-                  Email
-                </label>
+              <InputGroup icon={Mail} label="Email">
                 <input
                   type="email"
                   {...register("parentEmail")}
                   placeholder="parent@email.com"
-                  className={inp}
+                  className={getInpClass(true)}
                 />
-              </div>
+              </InputGroup>
             </div>
           </div>
         </div>
 
         {/* ── Actions ── */}
-        <div className="flex items-center justify-between bg-white rounded-xl border border-border px-6 py-4">
+        <div
+          className="flex items-center justify-between bg-white rounded-2xl border border-border shadow-sm px-6 py-5 animate-slideUp"
+          style={{ animationDelay: "250ms", animationFillMode: "both" }}
+        >
           <p className="text-xs text-text-muted hidden sm:block">
-            Fields marked with <span className="text-danger font-medium">*</span> are required
+            Fields marked with <span className="text-danger font-medium">*</span>{" "}
+            are required
           </p>
           <div className="flex gap-3 ml-auto">
             <Link href="/data-entry/students">
@@ -465,9 +438,9 @@ export default function NewStudentPage() {
             </Link>
             <Button type="submit" disabled={submitting} size="lg">
               {submitting ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4.5 h-4.5 animate-spin" />
               ) : (
-                <Save className="w-4 h-4" />
+                <Save className="w-4.5 h-4.5" />
               )}
               {submitting ? "Saving..." : "Save Student"}
             </Button>
@@ -477,3 +450,4 @@ export default function NewStudentPage() {
     </div>
   );
 }
+
