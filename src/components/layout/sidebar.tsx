@@ -16,6 +16,13 @@ import {
   PanelLeft,
   ClipboardList,
   FileText,
+  CalendarCheck,
+  History,
+  IndianRupee,
+  Receipt,
+  BookOpenCheck,
+  Wallet,
+  ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -42,6 +49,25 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Academics",
+    icon: <BookOpenCheck className="w-4 h-4" />,
+    items: [
+      { label: "Mark Attendance", href: "/attendance/mark", icon: <CalendarCheck className="w-4 h-4" /> },
+      { label: "Attendance History", href: "/attendance/history", icon: <History className="w-4 h-4" /> },
+      { label: "Examinations", href: "/examinations", icon: <ClipboardCheck className="w-4 h-4" /> },
+    ],
+  },
+  {
+    label: "Finance",
+    icon: <IndianRupee className="w-4 h-4" />,
+    items: [
+      { label: "Fee Structures", href: "/fees/structures", icon: <IndianRupee className="w-4 h-4" /> },
+      { label: "Collect Fees", href: "/fees/collect", icon: <Receipt className="w-4 h-4" /> },
+      { label: "Fee Ledger", href: "/fees/ledger", icon: <BookOpen className="w-4 h-4" /> },
+      { label: "Expenses", href: "/expenses", icon: <Wallet className="w-4 h-4" /> },
+    ],
+  },
+  {
     label: "Data Records",
     icon: <FileText className="w-4 h-4" />,
     items: [
@@ -53,7 +79,7 @@ const navGroups: NavGroup[] = [
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
-  const [expandedGroups, setExpandedGroups] = useState<string[]>(["Data Entry", "Data Records"]);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(["Data Entry", "Academics", "Finance", "Data Records"]);
 
   const toggleGroup = (label: string) => {
     setExpandedGroups((prev) =>

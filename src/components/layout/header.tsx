@@ -18,6 +18,16 @@ const breadcrumbLabels: Record<string, string> = {
   subjects: "Subjects",
   new: "Add New",
   edit: "Edit",
+  attendance: "Attendance",
+  mark: "Mark Attendance",
+  history: "History",
+  fees: "Fees",
+  structures: "Fee Structures",
+  collect: "Collect Fees",
+  ledger: "Fee Ledger",
+  examinations: "Examinations",
+  results: "Results",
+  expenses: "Expenses",
 };
 
 export function Header({ onMenuClick }: HeaderProps) {
